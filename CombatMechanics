@@ -1,100 +1,83 @@
 using UnityEngine;
-
-public class PlayerCombat : MonoBehaviour
+using SystemCollections;
+using SystemCollections.Generic;
+public class PlayerMovement : MonoBehaviour
 {
-    public float strongAttackChargeTime = 1f;
-    public float strongAttackDamage = 20f;
-    public float blockWindow = 0.5f;
-    public float blockStunTime = 0.5f;
-
-    private float strongAttackCharge = 0f;
-    private bool isChargingStrongAttack = false;
-    private bool isBlocking = false;
-    private float blockWindowStartTime = 0f;
-
-    private void Update()
-    {
-        // Strong Attack
-        if (Input.GetMouseButtonDown(0))
-        {
-            isChargingStrongAttack = true;
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            isChargingStrongAttack = false;
-
-            if (strongAttackCharge >= strongAttackChargeTime)
-            {
-                PerformStrongAttack();
-            }
-
-            strongAttackCharge = 0f;
-        }
-
-        if (isChargingStrongAttack)
-        {
-            strongAttackCharge += Time.deltaTime;
-
-            if (strongAttackCharge >= strongAttackChargeTime)
-            {
-                PerformStrongAttack();
-                isChargingStrongAttack = false;
-                strongAttackCharge = 0f;
-            }
-        }
-
-        // Block
-        if (Input.GetMouseButtonDown(1))
-        {
-            isBlocking = true;
-            blockWindowStartTime = Time.time;
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            isBlocking = false;
-        }
-
-        // Dodge
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            if (horizontal != 0 || vertical != 0)
-            {
-                PerformDodge();
-            }
-        }
-    }
-
-    private void PerformStrongAttack()
-    {
-        // Perform strong attack logic here
-    }
-
-    private void PerformDodge()
-    {
-        // Perform dodge logic here
-    }
-
-    public bool TryBlockHit(float damage)
-    {
-        if (isBlocking && Time.time <= blockWindowStartTime + blockWindow)
-        {
-            // Apply block stun effect
-            StartCoroutine(ApplyBlockStun());
-            return true;
-        }
-
-        return false;
-    }
-
-    private IEnumerator ApplyBlockStun()
-    {
-        // Apply stun effect here
-        yield return new WaitForSeconds(blockStunTime);
-        // Remove stun effect here
-    }
+   //Movement
+   fublic float moveSpeed : 5f
+   Vector2 movement;
+   Vector2 mousePos;
+   public bool movementEnabled;
+   
+   //references
+   public RigidBody20 rigidbody;
+   public Animator animator;
+   
+   //directions
+   public bool facingLeft;
+   public bool facingRight;
+   
+   //melee
+   float waitTime = 0.4f;
+   public bool canMelee = True;
+   float comboTime = 0.7f;
+   float canCombo = False;
+   
+   //ranged
+   bool isShooting = false;
+   bool shootTime = 0.4f;
+   public float bulletForce = 20f;
+   public GameObject bulletPrefab;
+   public Transform firePoint;
+   public Transform firePointRotation;
+   
+   //dash
+   public float dashSpeed = 14f;
+   private float dashTime;
+   public float startDashTime = 0.3f;
+   private int direction;
+   public float dashCooldown = 0.6f;
+   private float isDashing = false;
+   private float canDash = true;
+   
+   private Void Start()
+   {
+     dashTime = startDashTime;
+   }
+   
+   void Update()
+   {
+     Direction();
+     PlayerInput();
+     Animatin();
+     Melee();
+     Ranged();
+     Dash;
+   }
+   
+   void FixedUpdate()
+   {
+     Direction();
+   }
+   
+   void PlayerInput()
+   {
+     movement.x = Input.GetAxisRaw("Horizontal")
+     movement.y = Input.GetAxisRaw("Vertical")
+   }
+   
+   void PlayerInput()
+   {
+     movement.x = Input.GetAxisRaw("Horizontal")
+     movement.y = Input.GetAxisRaw("Vertical")
+   }
+   
+   void Movement()
+   {
+     if (MovementEnabled == True && isDashing == False)
+     {  
+       rb.MovePosition(rb.Position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
+     }
+   }
 }
+  
