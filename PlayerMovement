@@ -79,5 +79,46 @@ public class PlayerMovement : MonoBehaviour
        rb.MovePosition(rb.Position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
      }
    }
+   
+   void Melee()
+   {
+     if (Input.GetMouseButtonDown(0))
+     {
+       if (canMelee && canCombo == False)
+       {
+         AudioManager.instance.Play("Sword Swipe");
+         canMelee == false;
+         canCombo == True;
+         
+         if (facingRight)
+         {
+           animator.Play("Base Layer.SwordSwipeToRight", 0, 0f);
+         }
+         if (facingLeft)
+         {
+           animator.Play("Base Layer.SwordSwipeToLeft", 0, 0f);
+         }
+       }
+     }
+     if (CanMelee == false)
+     {
+       movementEnabled == false;
+       waitTime == Time.deltaTime;
+       if (waitTime <= 0)
+       {
+         waitTime = 0.4f;
+         canMelee = True;
+         movementEnabled == True;
+       }
+     }
+     if (CanCombo == True)
+     {
+       comboTime = Time.deltaTime;
+       if (comboTime <= 0)
+       {
+         comboTime = 0.7f;
+         canCombo = false;
+       }
+     }
 }
   
