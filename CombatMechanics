@@ -1,0 +1,100 @@
+using UnityEngine;
+
+public class PlayerCombat : MonoBehaviour
+{
+    public float strongAttackChargeTime = 1f;
+    public float strongAttackDamage = 20f;
+    public float blockWindow = 0.5f;
+    public float blockStunTime = 0.5f;
+
+    private float strongAttackCharge = 0f;
+    private bool isChargingStrongAttack = false;
+    private bool isBlocking = false;
+    private float blockWindowStartTime = 0f;
+
+    private void Update()
+    {
+        // Strong Attack
+        if (Input.GetMouseButtonDown(0))
+        {
+            isChargingStrongAttack = true;
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            isChargingStrongAttack = false;
+
+            if (strongAttackCharge >= strongAttackChargeTime)
+            {
+                PerformStrongAttack();
+            }
+
+            strongAttackCharge = 0f;
+        }
+
+        if (isChargingStrongAttack)
+        {
+            strongAttackCharge += Time.deltaTime;
+
+            if (strongAttackCharge >= strongAttackChargeTime)
+            {
+                PerformStrongAttack();
+                isChargingStrongAttack = false;
+                strongAttackCharge = 0f;
+            }
+        }
+
+        // Block
+        if (Input.GetMouseButtonDown(1))
+        {
+            isBlocking = true;
+            blockWindowStartTime = Time.time;
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            isBlocking = false;
+        }
+
+        // Dodge
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+
+            if (horizontal != 0 || vertical != 0)
+            {
+                PerformDodge();
+            }
+        }
+    }
+
+    private void PerformStrongAttack()
+    {
+        // Perform strong attack logic here
+    }
+
+    private void PerformDodge()
+    {
+        // Perform dodge logic here
+    }
+
+    public bool TryBlockHit(float damage)
+    {
+        if (isBlocking && Time.time <= blockWindowStartTime + blockWindow)
+        {
+            // Apply block stun effect
+            StartCoroutine(ApplyBlockStun());
+            return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerator ApplyBlockStun()
+    {
+        // Apply stun effect here
+        yield return new WaitForSeconds(blockStunTime);
+        // Remove stun effect here
+    }
+}
